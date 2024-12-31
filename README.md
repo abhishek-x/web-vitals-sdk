@@ -6,7 +6,7 @@
 
 Strong Core Web Vitals ensures a good user experience that’s smooth, fast, and stable. It also improves your SEO since Google also considers the Core Web Vitals in its ranking factors. With `WebVitalsSDK`, you can capture key web performance metrics, analyze them, and make data-driven optimizations.
 
-`WebVitalsSDK` is a lightweight plug-and-play frameworkwork, that you can use to capture critical performance metrics like FCP, LCP, TTFB, FID, CLS, INP, TTI, TBT along with device insights like geolocation, ip address, browser, operating system and screen size details. You can effortlessly integrate it into your website and send metrics and insights on every user page load.
+[WebVitalsSDK](https://www.npmjs.com/package/web-vitals-sdk) is a lightweight plug-and-play frameworkwork, that you can use to capture critical performance metrics like FCP, LCP, TTFB, FID, CLS, INP, TTI, TBT along with device insights like geolocation, ip address, browser, operating system and screen size details. You can effortlessly integrate it into your website and send metrics and insights on every user page load.
 
 ![UI](https://www.sentry.dev/static/ede0a65002023f413c74fa086e6ee51f/f904f/web-vital-hero-image-new.webp)
 
