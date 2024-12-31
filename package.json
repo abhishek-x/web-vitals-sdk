@@ -1,6 +1,6 @@
 {
   "name": "web-vitals-sdk",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A library for capturing and sending web vitals metrics",
   "main": "dist/web-vitals-sdk.umd.js",
   "module": "dist/web-vitals-sdk.esm.js",

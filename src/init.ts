@@ -20,10 +20,16 @@ export async function initWebVitalsSDK(config: WebVitalsConfig): Promise<void> {
         }
 
         // Collect device details
-        const deviceInfo = getDeviceInfo();
+        const deviceInfo = await getDeviceInfo();
+        if (config.debug) {
+            console.log('[WebVitalsSDK] Final Device Info:', deviceInfo);
+        }
 
         // Collect web vitals metrics
         const metrics = await collectMetrics();
+        if (config.debug) {
+            console.log('[WebVitalsSDK] Final Metrics:', metrics);
+        }
 
         // Build the payload
         const payload = {

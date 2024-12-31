@@ -5,7 +5,7 @@ import { initWebVitalsSDK } from './init';
 import { WebVitalsConfig } from './config';
 
 interface WebVitalsProviderProps extends WebVitalsConfig {
-  children: ReactNode;
+    children: ReactNode;
 }
 
 /**
@@ -13,14 +13,14 @@ interface WebVitalsProviderProps extends WebVitalsConfig {
  * Ensures it only initializes once using a ref.
  */
 export function WebVitalsProvider({ endpoint, debug, children }: WebVitalsProviderProps) {
-  const initializedRef = useRef(false);
+    const initializedRef = useRef(false);
 
-  useEffect(() => {
-    if (!initializedRef.current) {
-      initWebVitalsSDK({ endpoint, debug });
-      initializedRef.current = true;
-    }
-  }, [endpoint, debug]);
+    useEffect(() => {
+        if (!initializedRef.current) {
+            initWebVitalsSDK({ endpoint, debug });
+            initializedRef.current = true;
+        }
+    }, [endpoint, debug]);
 
-  return <>{children}</>;
+    return <>{children}</>;
 }

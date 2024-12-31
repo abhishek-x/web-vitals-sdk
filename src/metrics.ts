@@ -1,18 +1,14 @@
 // src/metrics.ts
 
 export interface Metrics {
-    ttfb?: number;
-    fcp?: number;
-    lcp?: number;
-    fid?: number;
-    cls?: number;
-    inp?: number;
-    tti?: number;
-    tbt?: number;
-}
-
-interface PerformanceLongTaskTiming extends PerformanceEntry {
-    duration: number;
+    ttfb?: number; // Time to First Byte
+    fcp?: number; // First Contentful Paint
+    lcp?: number; // Largest Contentful Paint
+    fid?: number; // First Input Delay
+    cls?: number; // Cumulative Layout Shift
+    inp?: number; // Interaction to Next Paint
+    tti?: number; // Time to Interactive
+    tbt?: number; // Total Blocking Time
 }
 
 /**
@@ -20,6 +16,9 @@ interface PerformanceLongTaskTiming extends PerformanceEntry {
  */
 export async function collectMetrics(): Promise<Metrics> {
     const metrics: Metrics = {};
+    let longTaskDuration = 0;
+    let lastLongTaskEndTime = 0;
+    let cumulativeLayoutShift = 0;
 
     // 1️⃣ TTFB: Time to First Byte
     const [navigation] = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
@@ -46,9 +45,10 @@ export async function collectMetrics(): Promise<Metrics> {
                         break;
 
                     case 'layout-shift':
-                        const shift = entry as any; // LayoutShift is experimental
+                        // Handle layout shift properly
+                        const shift = entry as unknown as { hadRecentInput?: boolean; value: number };
                         if (!shift.hadRecentInput) {
-                            metrics.cls = (metrics.cls || 0) + shift.value;
+                            cumulativeLayoutShift += shift.value;
                         }
                         break;
 
@@ -58,8 +58,12 @@ export async function collectMetrics(): Promise<Metrics> {
                         break;
 
                     case 'longtask':
-                        const task = entry as PerformanceLongTaskTiming;
-                        metrics.tbt = (metrics.tbt || 0) + Math.max(0, task.duration - 50);
+                        const task = entry as PerformanceEntry & { duration: number };
+                        const blockingTime = task.duration - 50;
+                        if (blockingTime > 0) {
+                            longTaskDuration += blockingTime;
+                        }
+                        lastLongTaskEndTime = task.startTime + task.duration;
                         break;
                 }
             });
@@ -72,13 +76,27 @@ export async function collectMetrics(): Promise<Metrics> {
         observer.observe({ type: 'event', buffered: true });
         observer.observe({ type: 'longtask', buffered: true });
 
-        // TTI (Time To Interactive)
-        setTimeout(() => {
-            const idleTime = performance.now();
-            metrics.tti = idleTime;
-            observer.disconnect();
-            resolve();
-        }, 5000); // Approximation
+        /**
+         * Time To Interactive (TTI) Approximation
+         */
+        const checkTTI = () => {
+            const now = performance.now();
+
+            // If there hasn't been a long task for 5 seconds, set TTI
+            if (now - lastLongTaskEndTime > 5000) {
+                metrics.tti = now;
+                metrics.tbt = longTaskDuration; // Finalize TBT
+                metrics.cls = cumulativeLayoutShift; // Finalize CLS
+                observer.disconnect();
+                resolve();
+            } else {
+                // Keep checking every 500ms
+                setTimeout(checkTTI, 500);
+            }
+        };
+
+        // Start checking TTI
+        setTimeout(checkTTI, 500);
     });
 
     return metrics;
