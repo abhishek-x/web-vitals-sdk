@@ -1,3 +1,6 @@
+![npm](https://img.shields.io/npm/v/web-vitals-sdk)
+![License](https://img.shields.io/github/license/abhishek-x/web-vitals-sdk)
+
 <img src="https://cdn3d.iconscout.com/3d/premium/thumb/performance-3d-icon-download-in-png-blend-fbx-gltf-file-formats--measuring-meter-speed-efficiency-seo-web-pack-icons-4497653.png?f=webp" height="64" width="64">
 
 # Web Vitals SDK
